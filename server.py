@@ -3,7 +3,7 @@
 # A python Reverse-shell
 # Developed by Elieroc
 # Start of project : 25/11/2020
-# Actual version : 1.0
+# Actual version : 1.1
 
 import socket
 
