@@ -18,10 +18,9 @@ def main():
     global socket
 
     # Pour régler le soucis, essayer de changer la variable socket par sock
-    socket = 0
+    #socket = 0
 
-    host = '192.168.1.100'
-    port = 1235
+    host, port = ('192.168.1.100', 1235)
     socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     try:
