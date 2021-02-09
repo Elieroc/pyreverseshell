@@ -19,7 +19,6 @@ while True:
     print("/!\ Client connecté /!\ ")
 
     path = conn.recv(9999).decode("utf8") + '$ '
-    print(path)
 
     while True:
         data=str( input(path) )
