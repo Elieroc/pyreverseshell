@@ -17,7 +17,7 @@ def main():
 
     global sock
 
-    host, port = ('192.168.43.90', 1235)
+    host, port = ('192.168.43.90', 1234)
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     try:
@@ -34,6 +34,10 @@ def main():
 
             if command == "exit":
                 print("Merci d'avoir utilisé Geckosec framework !")
+
+                result = "exit"
+                socket.send(result.encode())
+
                 time.sleep(0.5)
                 sock.close()
 
@@ -67,4 +71,4 @@ def main():
     finally:
         sock.close()
 
-#main()
+main()
